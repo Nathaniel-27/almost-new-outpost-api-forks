@@ -30,7 +30,8 @@ namespace AlmostNewOutpost.Api.Controllers.Admin
 
             return Ok(users);
         }
-        [HttpGet("int:id")]
+
+        [HttpGet("{id:int}")]
         public async Task<ActionResult<AdminUserDto>> GetById([FromRoute] int id)
         {
             AdminUserDto? adminUser = await (
