@@ -1,4 +1,5 @@
-﻿using AlmostNewOutpost.Api.Data;
+﻿
+using AlmostNewOutpost.Api.Data;
 using AlmostNewOutpost.Api.Models.Responses;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,9 +14,9 @@ namespace AlmostNewOutpost.Api.Controllers.Admin
 
         public AdminUsersId(OutpostDbContext db) => _db = db;
 
-
-        [HttpGet("{id:int}")]
-        public async Task<ActionResult<AdminUserDto>> Get([FromRoute] int id)
+        [Route("api/admin/users/")]
+        [HttpGet("int:id")]
+        public async Task<ActionResult<AdminUserDto>> GetById([FromRoute] int id)
         {
             AdminUserDto? adminUser = await (
                 from user in _db.Users
@@ -33,10 +34,13 @@ namespace AlmostNewOutpost.Api.Controllers.Admin
 
             if (adminUser == null)
             {
-                return NotFound();
+                return Problem(title: "User not found.", statusCode: StatusCodes.Status404NotFound);
+
             }
             return Ok(adminUser);
         }
 
     }
 }
+
+
