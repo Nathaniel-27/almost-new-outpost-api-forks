@@ -123,33 +123,31 @@ namespace AlmostNewOutpost.Api.Controllers.Admin
 
 
         }
-        [HttpPut("{id:int")]
+        [HttpPut("{id:int}")]
         public async Task<ActionResult<AdminUserDto>> Update([FromRoute] int id, [FromBody] UpdateUserRequest request)
         {
 
             User? user = await _db.Users.FindAsync(id);
-            if (User is null)
+            if (user is null)
             {
                 return Problem(title: "User not found.", statusCode: StatusCodes.Status404NotFound);
             }
-
-            string usernameTaken = request.Username.Trim();
-            bool Username = await _db.Users.AnyAsync(other => other.Username == username && other.UserId != id);
+            string username = request.Username.Trim();
+            bool usernameTaken = await _db.Users.AnyAsync(other => other.Username == username && other.UserId != id);
             if (usernameTaken)
             {
-                ModelState.AddModelError(nameof(CreateUserRequest.Username), "This username is taken please choose a differnet one.")
+                ModelState.AddModelError(nameof(CreateUserRequest.Username), "This username is taken.");
                 return ValidationProblem(ModelState);
             }
             bool roleExists = await _db.Roles.AnyAsync(role => role.RoleId == request.RoleId);
             if (!roleExists)
             {
-                ModelState.AddModelError(nameof(CreateUserRequest.RoleId), "Choose a role that exists.");
+                ModelState.AddModelError(nameof(UpdateUserRequest.RoleId), "Choose a role that exists.");
                 return ValidationProblem(ModelState);
             }
 
-            User? user = await _db.Users.FindAsync(id);
             user.Username = username;
-            await _db.SaveChangesAsync(); // UPDATE
+            user.RoleId = request.RoleId;
 
             try
             {
@@ -157,11 +155,10 @@ namespace AlmostNewOutpost.Api.Controllers.Admin
             }
             catch (DbUpdateException exception) when (DatabaseErrors.GetErrorNumber(exception) == DatabaseErrors.DuplicateKey)
             {
-                return Problem(title: "That username is already taken.", statusCode: StatusCodes.Status409Conflict);
+                return Problem(title: "This username is already taken .", statusCode: StatusCodes.Status409Conflict);
             }
 
-            AdminUserDto? created = await FindUserAsync(user.UserId);
-            return CreatedAtAction(nameof(GetById), new { id = user.UserId }, created);
+            return Ok(await FindUserAsync(id));
 
         }
 
