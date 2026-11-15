@@ -136,8 +136,7 @@ namespace AlmostNewOutpost.Api.Controllers.Admin
             bool usernameTaken = await _db.Users.AnyAsync(other => other.Username == username && other.UserId != id);
             if (usernameTaken)
             {
-                ModelState.AddModelError(nameof(CreateUserRequest.Username), "This username is taken.");
-                return ValidationProblem(ModelState);
+                return Problem(title: "The username is already in use", statusCode: StatusCodes.Status409Conflict);
             }
             bool roleExists = await _db.Roles.AnyAsync(role => role.RoleId == request.RoleId);
             if (!roleExists)
@@ -146,7 +145,7 @@ namespace AlmostNewOutpost.Api.Controllers.Admin
                 return ValidationProblem(ModelState);
             }
 
-            user.Username = username;
+            user.Username = username.Trim();
             user.RoleId = request.RoleId;
 
             try
