@@ -146,7 +146,7 @@ namespace AlmostNewOutpost.Api.Controllers.Admin
             }
 
             user.Username = username.Trim();
-            user.RoleId = request.RoleId;
+            user.RoleId = request.RoleId!.Value;
 
             try
             {

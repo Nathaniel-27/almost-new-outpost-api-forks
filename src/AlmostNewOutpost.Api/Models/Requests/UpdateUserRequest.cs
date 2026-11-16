@@ -13,6 +13,6 @@ namespace AlmostNewOutpost.Api.Models.Requests
 
         [Required]
         [Range(1, int.MaxValue, ErrorMessage = "Choose a role.")]
-        public int RoleId { get; set; }
+        public int? RoleId { get; set; }
     }
 }
