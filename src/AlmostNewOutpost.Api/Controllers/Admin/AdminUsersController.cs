@@ -136,7 +136,7 @@ namespace AlmostNewOutpost.Api.Controllers.Admin
             bool usernameTaken = await _db.Users.AnyAsync(other => other.Username == username && other.UserId != id);
             if (usernameTaken)
             {
-                return Problem(title: "The username is already in use", statusCode: StatusCodes.Status409Conflict);
+                return Problem(title: "That Username is already taken", statusCode: StatusCodes.Status409Conflict);
             }
             bool roleExists = await _db.Roles.AnyAsync(role => role.RoleId == request.RoleId);
             if (!roleExists)
@@ -154,7 +154,7 @@ namespace AlmostNewOutpost.Api.Controllers.Admin
             }
             catch (DbUpdateException exception) when (DatabaseErrors.GetErrorNumber(exception) == DatabaseErrors.DuplicateKey)
             {
-                return Problem(title: "This username is already taken .", statusCode: StatusCodes.Status409Conflict);
+                return Problem(title: "That username is already taken .", statusCode: StatusCodes.Status409Conflict);
             }
 
             return Ok(await FindUserAsync(id));
