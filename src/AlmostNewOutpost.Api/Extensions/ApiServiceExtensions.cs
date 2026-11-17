@@ -1,6 +1,6 @@
-using System.Text.Json.Serialization;
 using AlmostNewOutpost.Api.Services;
 using Microsoft.Extensions.Options;
+using System.Text.Json.Serialization;
 using FrameworkCorsOptions = Microsoft.AspNetCore.Cors.Infrastructure.CorsOptions;
 using OutpostCorsOptions = AlmostNewOutpost.Api.Options.CorsOptions;
 
@@ -35,6 +35,7 @@ public static class ApiServiceExtensions
 
         services.AddScoped<ProductService>();
         services.AddScoped<PurchaseService>();
+        services.AddScoped<UserService>();
 
         return services;
     }

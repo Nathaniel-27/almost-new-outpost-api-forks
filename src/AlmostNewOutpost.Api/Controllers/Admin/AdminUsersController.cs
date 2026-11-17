@@ -3,6 +3,7 @@ using AlmostNewOutpost.Api.Models.Entities;
 using AlmostNewOutpost.Api.Models.Requests;
 using AlmostNewOutpost.Api.Models.Responses;
 using AlmostNewOutpost.Api.Models.Rows;
+using AlmostNewOutpost.Api.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,29 +14,24 @@ namespace AlmostNewOutpost.Api.Controllers.Admin
 {
     [ApiController]
     [Route("api/admin/users/")]
-    public class AdminUsersController(OutpostDbContext db) : ControllerBase
+    public class AdminUsersController : ControllerBase
     {
-        private readonly OutpostDbContext _db = db;
+        private readonly OutpostDbContext _db;
+        private readonly UserService _userService;
+        public AdminUsersController(OutpostDbContext db, UserService userService)
+        {
+            _db = db;
+            _userService = userService;
+        }
 
         [HttpGet]
         public async Task<ActionResult<List<AdminUserDto>>> GetAll([FromQuery] bool includeArchived = false)
         {
-            List<AdminUserDto> users = await (
-                from user in _db.Users
-                join role in _db.Roles on user.RoleId equals role.RoleId
-                where includeArchived || user.ArchivedAtUtc == null
-                orderby user.Username
-                select new AdminUserDto
-                {
-                    Id = user.UserId,
-                    Username = user.Username,
-                    RoleId = role.RoleId,
-                    Role = role.RoleName,
-                    ArchivedAtUtc = user.ArchivedAtUtc,
-                }).ToListAsync();
-
+            List<AdminUserDto> users = await _userService.GetAllAsync(includeArchived);
             return Ok(users);
+
         }
+
 
         [HttpGet("{id:int}")]
         public async Task<ActionResult<AdminUserDto>> GetById([FromRoute] int id)
@@ -86,6 +82,9 @@ namespace AlmostNewOutpost.Api.Controllers.Admin
         }
 
         IPasswordHasher<UserRow> _passwordHasher = new PasswordHasher<UserRow>();
+
+
+
 
         [HttpPost]
         public async Task<ActionResult<AdminUserDto>> Create(CreateUserRequest request)
@@ -165,27 +164,3 @@ namespace AlmostNewOutpost.Api.Controllers.Admin
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

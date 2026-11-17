@@ -1,8 +1,9 @@
 using AlmostNewOutpost.Api.Data;
 using AlmostNewOutpost.Api.Options;
 using AlmostNewOutpost.Api.Repositories;
-using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using static AlmostNewOutpost.Api.Repositories.UserAdminRepostiory;
 
 namespace AlmostNewOutpost.Api.Extensions;
 
@@ -25,6 +26,7 @@ public static class DatabaseServiceExtensions
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IPurchaseRepository, PurchaseRepository>();
+        services.AddScoped<IUserAdminRepository, UserAdminRepository>();
 
         return services;
     }
