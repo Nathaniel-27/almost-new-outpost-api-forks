@@ -31,6 +31,7 @@ namespace AlmostNewOutpost.Api.Repositories
 
                 return users;
             }
+
         }
     }
 }

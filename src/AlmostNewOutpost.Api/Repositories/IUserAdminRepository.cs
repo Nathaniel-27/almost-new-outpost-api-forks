@@ -6,5 +6,6 @@ namespace AlmostNewOutpost.Api.Repositories
     {
         Task<List<AdminUserDto>> GetAllAsync(bool includeArchived);
 
+
     }
 }
